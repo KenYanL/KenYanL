@@ -2,7 +2,7 @@
 
 Building random things across academia & industry. Currently in a vibe coding phase.
 
-**🔭 Interests:** reinforcement learning · data fusion · statistical learning · simulation
+**🔭 Interests:** · Statistical Learning · Reinforcement Learning · Multi-source Data Fusion 
 
 **🛠️ Tools**
 
