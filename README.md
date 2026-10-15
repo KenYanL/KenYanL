@@ -15,14 +15,6 @@ Building random things across academia & industry. Currently in a vibe coding ph
 - [IRL](https://github.com/KenYanL/IRL) — inverse reinforcement learning experiments
 - [bilibili-media-controller](https://github.com/KenYanL/bilibili-media-controller) — a lightweight Tampermonkey script
 
-**📊 Stats**
-
-<p>
-  <img height="160" src="https://github-readme-stats.vercel.app/api?username=KenYanL&show_icons=true&count_private=true&hide_border=true&theme=transparent" />
-  <img height="160" src="https://github-readme-stats.vercel.app/api/top-langs/?username=KenYanL&layout=compact&hide_border=true&theme=transparent" />
-</p>
-
-[![GitHub Streak](https://streak-stats.demolab.com?user=KenYanL&hide_border=true&theme=transparent)](https://git.io/streak-stats)
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/KenYanL/KenYanL/output/github-snake-dark.svg" />
