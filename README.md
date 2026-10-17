@@ -12,6 +12,14 @@ Building random things across academia & industry. Currently in a vibe coding ph
 
 <img alt="Travel map: places I've been" src="assets/travel-map.png" width="100%" />
 
+**🟩 Tetris contributions**
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/KenYanL/KenYanL/output/tetris-contrib-dark.svg" />
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/KenYanL/KenYanL/output/tetris-contrib.svg" />
+  <img alt="Tetris-style GitHub contribution graph" src="https://raw.githubusercontent.com/KenYanL/KenYanL/output/tetris-contrib.svg" />
+</picture>
+
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/KenYanL/KenYanL/output/github-snake-dark.svg" />
   <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/KenYanL/KenYanL/output/github-snake.svg" />

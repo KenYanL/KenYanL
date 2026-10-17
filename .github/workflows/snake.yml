@@ -10,16 +10,33 @@ on:
 permissions:
   contents: write
 
+# Shares the output branch with the tetris workflow. Each publish replaces
+# that branch, so this job writes both animations before pushing.
+concurrency:
+  group: profile-output-branch
+  cancel-in-progress: false
+
 jobs:
   generate:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+
       - uses: Platane/snk/svg-only@v3
         with:
           github_user_name: ${{ github.repository_owner }}
           outputs: |
             dist/github-snake.svg
             dist/github-snake-dark.svg?palette=github-dark
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Generate tetris contribution SVGs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python scripts/tetris_contrib.py --username "${{ github.repository_owner }}" --out dist
 
       - uses: crazy-max/ghaction-github-pages@v5
         with:
