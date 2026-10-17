@@ -1,0 +1,33 @@
+name: Generate tetris bricks
+
+on:
+  schedule:
+    - cron: "41 7 * * *" # daily, after the snake workflow
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Test packer
+        run: python3 -m unittest tools/tetris/test_brickfall.py
+
+      - name: Generate SVGs from the contribution calendar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_USERNAME: ${{ github.repository_owner }}
+        run: python3 tools/tetris/generate.py --out dist
+
+      # Publishes dist/ to tetris-output only. Does not commit to main
+      # and does not touch the snake output branch.
+      - uses: crazy-max/ghaction-github-pages@v5
+        with:
+          target_branch: tetris-output
+          build_dir: dist
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
