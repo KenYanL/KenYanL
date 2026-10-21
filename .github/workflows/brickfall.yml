@@ -1,4 +1,4 @@
-name: Generate snake
+name: Generate contribution brickfall
 
 on:
   schedule:
@@ -14,12 +14,13 @@ jobs:
   generate:
     runs-on: ubuntu-latest
     steps:
-      - uses: Platane/snk/svg-only@v3
+      - uses: actions/checkout@v4
+
+      - uses: KenYanL/contrib-tetris@v1
         with:
           github_user_name: ${{ github.repository_owner }}
-          outputs: |
-            dist/github-snake.svg
-            dist/github-snake-dark.svg?palette=github-dark
+          svg_light_path: dist/tetris-contrib.svg
+          svg_dark_path: dist/tetris-contrib-dark.svg
 
       - uses: crazy-max/ghaction-github-pages@v5
         with:
