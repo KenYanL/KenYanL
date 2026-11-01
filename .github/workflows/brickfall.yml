@@ -1,14 +1,35 @@
 name: Generate contribution brickfall
 
+# This is the only workflow that publishes to the `output` branch.
+# crazy-max/ghaction-github-pages force-pushes a fresh commit containing exactly
+# the contents of `dist/` (keep_history defaults to false), so every file that
+# must live on `output` (tetris SVGs + travel-map.png) is staged into dist/ here.
+#
+# Seasonal travel map: on Oct 31 (UTC date of the run) dist/travel-map.png is a
+# copy of assets/travel-map-halloween.png; on every other day it is a copy of
+# assets/travel-map.png. The README embeds
+# https://raw.githubusercontent.com/KenYanL/KenYanL/output/travel-map.png
+
 on:
   schedule:
-    - cron: "17 6 * * *"   # daily
+    - cron: "7 0 * * *"    # daily, just after 00:00 UTC, so the seasonal swap lands near the UTC date change
+    - cron: "17 6 * * *"   # daily (original refresh time)
   workflow_dispatch:
+    inputs:
+      palette:
+        description: "Travel map palette (auto = halloween on Oct 31 UTC, default otherwise)"
+        type: choice
+        options: [auto, default, halloween]
+        default: auto
   push:
     branches: [main]
 
 permissions:
   contents: write
+
+concurrency:
+  group: publish-output-branch
+  cancel-in-progress: false
 
 jobs:
   generate:
@@ -21,6 +42,21 @@ jobs:
           github_user_name: ${{ github.repository_owner }}
           svg_light_path: dist/tetris-contrib.svg
           svg_dark_path: dist/tetris-contrib-dark.svg
+
+      - name: Stage seasonal travel map (UTC date)
+        env:
+          REQUESTED: ${{ github.event.inputs.palette || 'auto' }}
+        run: |
+          palette="$REQUESTED"
+          if [ "$palette" = "auto" ]; then
+            if [ "$(date -u +%m-%d)" = "10-31" ]; then palette=halloween; else palette=default; fi
+          fi
+          if [ "$palette" = "halloween" ]; then src=assets/travel-map-halloween.png; else src=assets/travel-map.png; fi
+          echo "UTC date $(date -u +%F), palette: $palette, source: $src"
+          test -f "$src"
+          mkdir -p dist
+          cp "$src" dist/travel-map.png
+          ls -la dist
 
       - uses: crazy-max/ghaction-github-pages@v5
         with:
