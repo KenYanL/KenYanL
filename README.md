@@ -10,7 +10,7 @@ Building random things across academia & industry. Currently in a vibe coding ph
 
 **🌏 Places I've been**
 
-<img alt="Travel map: places I've been" src="assets/travel-map.png" width="100%" />
+<img alt="Travel map: places I've been" src="https://raw.githubusercontent.com/KenYanL/KenYanL/output/travel-map.png" width="100%" />
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/KenYanL/KenYanL/output/tetris-contrib-dark.svg" />
