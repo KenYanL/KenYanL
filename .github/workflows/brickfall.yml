@@ -5,9 +5,10 @@ name: Generate contribution brickfall
 # the contents of `dist/` (keep_history defaults to false), so every file that
 # must live on `output` (tetris SVGs + travel-map.png) is staged into dist/ here.
 #
-# Seasonal travel map: on Oct 31 (UTC date of the run) dist/travel-map.png is a
-# copy of assets/travel-map-halloween.png; on every other day it is a copy of
-# assets/travel-map.png. The README embeds
+# Seasonal palette: on Oct 31 (UTC date of the run), or when picked manually,
+# the tetris SVGs use contrib-tetris's halloween palette and dist/travel-map.png
+# is a copy of assets/travel-map-halloween.png; on every other day both use the
+# default palette (assets/travel-map.png). The README embeds
 # https://raw.githubusercontent.com/KenYanL/KenYanL/output/travel-map.png
 
 on:
@@ -17,7 +18,7 @@ on:
   workflow_dispatch:
     inputs:
       palette:
-        description: "Travel map palette (auto = halloween on Oct 31 UTC, default otherwise)"
+        description: "Tetris graph and travel map palette (auto = halloween on Oct 31 UTC, default otherwise)"
         type: choice
         options: [auto, default, halloween]
         default: auto
@@ -37,13 +38,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: KenYanL/contrib-tetris@v1
-        with:
-          github_user_name: ${{ github.repository_owner }}
-          svg_light_path: dist/tetris-contrib.svg
-          svg_dark_path: dist/tetris-contrib-dark.svg
-
-      - name: Stage seasonal travel map (UTC date)
+      # One date decision for both the tetris graph and the travel map.
+      - name: Pick seasonal palette (UTC date)
+        id: season
         env:
           REQUESTED: ${{ github.event.inputs.palette || 'auto' }}
         run: |
@@ -51,8 +48,22 @@ jobs:
           if [ "$palette" = "auto" ]; then
             if [ "$(date -u +%m-%d)" = "10-31" ]; then palette=halloween; else palette=default; fi
           fi
-          if [ "$palette" = "halloween" ]; then src=assets/travel-map-halloween.png; else src=assets/travel-map.png; fi
-          echo "UTC date $(date -u +%F), palette: $palette, source: $src"
+          echo "palette=$palette" >> "$GITHUB_OUTPUT"
+          echo "UTC date $(date -u +%F), palette: $palette"
+
+      - uses: KenYanL/contrib-tetris@v1
+        with:
+          github_user_name: ${{ github.repository_owner }}
+          svg_light_path: dist/tetris-contrib.svg
+          svg_dark_path: dist/tetris-contrib-dark.svg
+          palette: ${{ steps.season.outputs.palette }}
+
+      - name: Stage seasonal travel map
+        env:
+          PALETTE: ${{ steps.season.outputs.palette }}
+        run: |
+          if [ "$PALETTE" = "halloween" ]; then src=assets/travel-map-halloween.png; else src=assets/travel-map.png; fi
+          echo "palette: $PALETTE, source: $src"
           test -f "$src"
           mkdir -p dist
           cp "$src" dist/travel-map.png
