@@ -3,13 +3,16 @@ name: Generate contribution brickfall
 # This is the only workflow that publishes to the `output` branch.
 # crazy-max/ghaction-github-pages force-pushes a fresh commit containing exactly
 # the contents of `dist/` (keep_history defaults to false), so every file that
-# must live on `output` (tetris SVGs + travel-map.png) is staged into dist/ here.
+# must live on `output` (tetris SVGs + travel-map.svg, plus the static PNG) is
+# staged into dist/ here.
 #
 # Seasonal palette: on Oct 31 (UTC date of the run), or when picked manually,
-# the tetris SVGs use contrib-tetris's halloween palette and dist/travel-map.png
-# is a copy of assets/travel-map-halloween.png; on every other day both use the
-# default palette (assets/travel-map.png). The README embeds
-# https://raw.githubusercontent.com/KenYanL/KenYanL/output/travel-map.png
+# the tetris SVGs use contrib-tetris's halloween palette and dist/travel-map.svg
+# is a copy of assets/travel-map-halloween.svg; on every other day both use the
+# default palette (assets/travel-map.svg). The README embeds
+# https://raw.githubusercontent.com/KenYanL/KenYanL/output/travel-map.svg
+# dist/travel-map.png is still published so the previous raw URL keeps working.
+# Those PNGs are the static visited maps and do not carry the SMIL planned blink.
 
 on:
   schedule:
@@ -62,11 +65,19 @@ jobs:
         env:
           PALETTE: ${{ steps.season.outputs.palette }}
         run: |
-          if [ "$PALETTE" = "halloween" ]; then src=assets/travel-map-halloween.png; else src=assets/travel-map.png; fi
-          echo "palette: $PALETTE, source: $src"
-          test -f "$src"
+          if [ "$PALETTE" = "halloween" ]; then
+            svg=assets/travel-map-halloween.svg
+            png=assets/travel-map-halloween.png
+          else
+            svg=assets/travel-map.svg
+            png=assets/travel-map.png
+          fi
+          echo "palette: $PALETTE, svg: $svg, png: $png"
+          test -f "$svg"
+          test -f "$png"
           mkdir -p dist
-          cp "$src" dist/travel-map.png
+          cp "$svg" dist/travel-map.svg
+          cp "$png" dist/travel-map.png
           ls -la dist
 
       - uses: crazy-max/ghaction-github-pages@v5
