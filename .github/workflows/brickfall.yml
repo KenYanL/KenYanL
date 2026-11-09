@@ -17,7 +17,7 @@ name: Generate contribution brickfall
 on:
   schedule:
     - cron: "7 0 * * *"    # daily, just after 00:00 UTC, so the seasonal swap lands near the UTC date change
-    - cron: "17 6 * * *"   # daily (original refresh time)
+    - cron: "17 3-23/3 * * *"  # every 3 hours after that, so same-day contributions show up within a few hours
   workflow_dispatch:
     inputs:
       palette:
