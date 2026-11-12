@@ -5,10 +5,12 @@ The map holiday follows the same UTC days as contrib-tetris so the travel
 map and the brickfall graph change together:
 
 * lunarnewyear: contrib-tetris's three-day UTC window (tabulated Lunar New
-  Year plus the next two days, 2026-2035). Uses the Lucky Envelope assets.
+  Year plus the next two days, 2026-2035). Uses the Lucky Envelope assets,
+  including the New Year firecracker bursts on the SVG (the PNG is static).
 * midautumn: the same Mid-Autumn three-day UTC windows as contrib-tetris.
 * valentine: 14 February (UTC).
-* newyear: 1 January (UTC). Lucky Envelope assets, same ink as lunarnewyear.
+* newyear: 1 January (UTC). Lucky Envelope assets, same ink and firecracker
+  SVG as lunarnewyear.
 * halloween: 31 October (UTC).
 * christmas: 24-26 December (UTC).
 
@@ -180,12 +182,27 @@ def self_test() -> int:
             print(f"FAIL {req} {day} got {got} expected {exp}", file=sys.stderr)
             failed += 1
     # Assets for every concrete holiday exist.
-    for name in ("valentine", "lunarnewyear", "newyear", "midautumn", "halloween", "christmas"):
+    holiday_names = ("valentine", "lunarnewyear", "newyear", "midautumn", "halloween", "christmas")
+    for name in holiday_names:
         svg, png = asset_paths(name)
         if not svg.is_file() or not png.is_file():
             print(f"FAIL missing assets for {name}", file=sys.stderr)
             failed += 1
-    total = len(cases) + 6
+    # New Year / Lunar New Year SVGs carry the firecracker bursts; others do not.
+    firecracker_names = ("newyear", "lunarnewyear")
+    for name in holiday_names + ("default",):
+        svg, _png = asset_paths(name)
+        raw = svg.read_text(encoding="utf-8") if svg.is_file() else ""
+        has = 'id="firecrackers"' in raw and "prefers-reduced-motion" in raw
+        expect = name in firecracker_names
+        if has != expect:
+            print(
+                f"FAIL {name} firecracker markers {'present' if has else 'missing'}, "
+                f"expected {'present' if expect else 'absent'}",
+                file=sys.stderr,
+            )
+            failed += 1
+    total = len(cases) + 6 + len(holiday_names) + 1
     passed = total - failed
     print(f"{passed}/{total} resolver cases passed")
     return 0 if failed == 0 else 1

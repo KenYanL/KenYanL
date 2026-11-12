@@ -21,10 +21,12 @@ name: Generate contribution brickfall
 # midautumn (the same three-day windows), newyear (1 Jan), halloween
 # (31 Oct), and christmas (24-26 Dec). On a dual-holiday day the static
 # map uses the Chinese festival. Assets live in assets/travel-map-<name>.
-# The README embeds
+# The newyear and lunarnewyear SVGs include New Year firecracker bursts
+# over visited cities; the PNG stays static. The README embeds
 # https://raw.githubusercontent.com/KenYanL/KenYanL/output/travel-map.svg
 # dist/travel-map.png is still published so the previous raw URL keeps working.
-# Those PNGs are the static visited maps and do not carry the SMIL planned blink.
+# Those PNGs are the static visited maps and do not carry the SMIL planned
+# blink or the firecracker animation.
 
 on:
   schedule:
