@@ -6,24 +6,34 @@ name: Generate contribution brickfall
 # must live on `output` (tetris SVGs + travel-map.svg, plus the static PNG) is
 # staged into dist/ here.
 #
-# Seasonal palette: on Oct 31 (UTC date of the run), or when picked manually,
-# the tetris SVGs use contrib-tetris's halloween palette and dist/travel-map.svg
-# is a copy of assets/travel-map-halloween.svg; on every other day both use the
-# default palette (assets/travel-map.svg). The README embeds
+# Palettes are no longer pre-resolved in this repo (that path only knew
+# Halloween). contrib-tetris@v1 gets `palette: auto` and applies its own
+# catalog, including the dual-holiday fade when a Chinese festival and a
+# Western holiday share a UTC day.
+#
+#   On the current moving v1 tag (v1.4.0, 2026-11-06): halloween, christmas,
+#   newyear, and lunarnewyear. Valentine needs the v1.5.0 release and a
+#   force-update of the v1 tag. Mid-Autumn is only on a local unreleased
+#   branch; auto will pick it up once that palette is released and v1 moves.
+#
+# The travel map follows travel-footprint's auto catalog (halloween on
+# 31 October UTC, christmas on 24-26 December UTC, default otherwise),
+# resolved by scripts/resolve_travel_palette.py. It does not borrow
+# contrib-tetris-only holidays. The README embeds
 # https://raw.githubusercontent.com/KenYanL/KenYanL/output/travel-map.svg
 # dist/travel-map.png is still published so the previous raw URL keeps working.
 # Those PNGs are the static visited maps and do not carry the SMIL planned blink.
 
 on:
   schedule:
-    - cron: "7 0 * * *"    # daily, just after 00:00 UTC, so the seasonal swap lands near the UTC date change
+    - cron: "7 0 * * *"    # daily, just after 00:00 UTC, so the holiday swap lands near the UTC date change
     - cron: "17 6 * * *"   # daily (original refresh time)
   workflow_dispatch:
     inputs:
       palette:
-        description: "Tetris graph and travel map palette (auto = halloween on Oct 31 UTC, default otherwise)"
+        description: "Palette for the tetris graph (auto = contrib-tetris catalog). The travel map uses travel-footprint auto when this is auto, or a matching asset when one exists."
         type: choice
-        options: [auto, default, halloween]
+        options: [auto, default, halloween, christmas, newyear, lunarnewyear, valentine]
         default: auto
   push:
     branches: [main]
@@ -41,43 +51,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # One date decision for both the tetris graph and the travel map.
-      - name: Pick seasonal palette (UTC date)
-        id: season
-        env:
-          REQUESTED: ${{ github.event.inputs.palette || 'auto' }}
-        run: |
-          palette="$REQUESTED"
-          if [ "$palette" = "auto" ]; then
-            if [ "$(date -u +%m-%d)" = "10-31" ]; then palette=halloween; else palette=default; fi
-          fi
-          echo "palette=$palette" >> "$GITHUB_OUTPUT"
-          echo "UTC date $(date -u +%F), palette: $palette"
-
       - uses: KenYanL/contrib-tetris@v1
         with:
           github_user_name: ${{ github.repository_owner }}
           svg_light_path: dist/tetris-contrib.svg
           svg_dark_path: dist/tetris-contrib-dark.svg
-          palette: ${{ steps.season.outputs.palette }}
+          palette: ${{ github.event.inputs.palette || 'auto' }}
 
       - name: Stage seasonal travel map
         env:
-          PALETTE: ${{ steps.season.outputs.palette }}
+          REQUESTED: ${{ github.event.inputs.palette || 'auto' }}
         run: |
-          if [ "$PALETTE" = "halloween" ]; then
-            svg=assets/travel-map-halloween.svg
-            png=assets/travel-map-halloween.png
-          else
-            svg=assets/travel-map.svg
-            png=assets/travel-map.png
-          fi
-          echo "palette: $PALETTE, svg: $svg, png: $png"
-          test -f "$svg"
-          test -f "$png"
+          set -euo pipefail
+          eval "$(python3 scripts/resolve_travel_palette.py)"
+          echo "travel palette: $PALETTE (UTC $DATE_UTC)"
+          test -f "$SVG"
+          test -f "$PNG"
           mkdir -p dist
-          cp "$svg" dist/travel-map.svg
-          cp "$png" dist/travel-map.png
+          cp "$SVG" dist/travel-map.svg
+          cp "$PNG" dist/travel-map.png
           ls -la dist
 
       - uses: crazy-max/ghaction-github-pages@v5
