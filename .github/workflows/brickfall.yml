@@ -16,10 +16,12 @@ name: Generate contribution brickfall
 #   force-update of the v1 tag. Mid-Autumn is only on a local unreleased
 #   branch; auto will pick it up once that palette is released and v1 moves.
 #
-# The travel map follows travel-footprint's auto catalog (halloween on
-# 31 October UTC, christmas on 24-26 December UTC, default otherwise),
-# resolved by scripts/resolve_travel_palette.py. It does not borrow
-# contrib-tetris-only holidays. The README embeds
+# The travel map uses the same UTC holidays as contrib-tetris, resolved by
+# scripts/resolve_travel_palette.py: valentine (14 Feb), lunarnewyear and
+# midautumn (the same three-day windows), newyear (1 Jan), halloween
+# (31 Oct), and christmas (24-26 Dec). On a dual-holiday day the static
+# map uses the Chinese festival. Assets live in assets/travel-map-<name>.
+# The README embeds
 # https://raw.githubusercontent.com/KenYanL/KenYanL/output/travel-map.svg
 # dist/travel-map.png is still published so the previous raw URL keeps working.
 # Those PNGs are the static visited maps and do not carry the SMIL planned blink.
@@ -31,7 +33,7 @@ on:
   workflow_dispatch:
     inputs:
       palette:
-        description: "Palette for the tetris graph (auto = contrib-tetris catalog). The travel map uses travel-footprint auto when this is auto, or a matching asset when one exists."
+        description: "Palette for the tetris graph and travel map (auto = each tool\'s holiday catalog on the same UTC days). A concrete name uses a matching travel asset when one exists."
         type: choice
         options: [auto, default, halloween, christmas, newyear, lunarnewyear, valentine]
         default: auto
