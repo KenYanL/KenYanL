@@ -11,10 +11,10 @@ name: Generate contribution brickfall
 # catalog, including the dual-holiday fade when a Chinese festival and a
 # Western holiday share a UTC day.
 #
-#   On the current moving v1 tag (v1.4.0, 2026-11-06): halloween, christmas,
-#   newyear, and lunarnewyear. Valentine needs the v1.5.0 release and a
-#   force-update of the v1 tag. Mid-Autumn is only on a local unreleased
-#   branch; auto will pick it up once that palette is released and v1 moves.
+#   On the current moving v1 tag (v1.5.0, 2026-11-16): halloween, christmas,
+#   newyear, lunarnewyear, and valentine, including the dual-holiday fade.
+#   Mid-Autumn is only on a local unreleased branch; auto will pick it up
+#   once that palette is released and v1 moves.
 #
 # The travel map uses the same UTC holidays as contrib-tetris, resolved by
 # scripts/resolve_travel_palette.py: valentine (14 Feb), lunarnewyear and
@@ -35,7 +35,7 @@ on:
   workflow_dispatch:
     inputs:
       palette:
-        description: "Palette for the tetris graph and travel map (auto = each tool\'s holiday catalog on the same UTC days). A concrete name uses a matching travel asset when one exists."
+        description: "Palette for the tetris graph and travel map (auto = each tool's holiday catalog on the same UTC days). A concrete name uses a matching travel asset when one exists."
         type: choice
         options: [auto, default, halloween, christmas, newyear, lunarnewyear, valentine]
         default: auto
