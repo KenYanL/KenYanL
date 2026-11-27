@@ -25,8 +25,7 @@ name: Generate contribution brickfall
 # over visited cities; the PNG stays static. The README embeds
 # https://raw.githubusercontent.com/KenYanL/KenYanL/output/travel-map.svg
 # dist/travel-map.png is still published so the previous raw URL keeps working.
-# Those PNGs are the static visited maps and do not carry the SMIL planned
-# blink or the firecracker animation.
+# Those PNGs are static and do not carry the firecracker animation.
 
 on:
   schedule:
